@@ -8,39 +8,40 @@
 
 #include <iostream>
 #include <string>
-
 #include "Busca.h"
 #include "Grafo.h"
 #include "GrafoIO.h"
 #include "GrafoLista.h"
 #include "GrafoMatriz.h"
 
+using namespace std;
+
 // ── Utilidade ────────────────────────────────────────────────────────────────
 
 static int passou = 0, falhou = 0;
 
-static void checar(const std::string &desc, bool cond)
+static void checar(const string &desc, bool cond)
 {
   if (cond)
   {
-    std::cout << "  [OK]     " << desc << "\n";
+    cout << "  [OK]     " << desc << "\n";
     passou++;
   }
   else
   {
-    std::cout << "  [FALHOU] " << desc << "\n";
+    cout << "  [FALHOU] " << desc << "\n";
     falhou++;
   }
 }
 
-static void secao(const std::string &titulo)
+static void secao(const string &titulo)
 {
-  std::cout << "\n=== " << titulo << " ===\n";
+  cout << "\n=== " << titulo << " ===\n";
 }
 
 // ── Parte 1: suite genérica ───────────────────────────────────────────────────
 
-static void rodarTestes(Grafo &g, const std::string &nome)
+static void rodarTestes(Grafo &g, const string &nome)
 {
   secao(nome);
 
@@ -84,11 +85,11 @@ static void rodarTestes(Grafo &g, const std::string &nome)
   checar("inserirAresta idx invalido", !g.inserirAresta(0, 99));
   checar("removerVertice idx invalido", !g.removerVertice(99));
 
-  std::cout << "  [VISUAL] imprimeGrafo():\n";
+  cout << "  [VISUAL] imprimeGrafo():\n";
   g.imprimeGrafo();
 }
 
-static void rodarTestesDirecionado(Grafo &g, const std::string &nome)
+static void rodarTestesDirecionado(Grafo &g, const string &nome)
 {
   secao(nome + " (direcionado)");
 
@@ -118,11 +119,11 @@ static void rodarTestesDirecionado(Grafo &g, const std::string &nome)
 //
 // Grafo não-direcionado ponderado com 5 vértices e 6 arestas.
 
-static const std::string ARQUIVO = "grafo_teste.txt";
+static const string ARQUIVO = "grafo_teste.txt";
 
 static void testarCarregarArquivo(bool usarLista)
 {
-  const std::string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
+  const string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
   secao("carregarDeArquivo — " + rep);
 
   try
@@ -151,10 +152,10 @@ static void testarCarregarArquivo(bool usarLista)
     checar("pesoAresta 1-4 == 1", g->pesoAresta(1, 4) == 1.0f);
     checar("pesoAresta 3-4 == 3", g->pesoAresta(3, 4) == 3.0f);
   }
-  catch (const std::exception &e)
+  catch (const exception &e)
   {
-    std::cout << "  [FALHOU] excecao ao abrir arquivo: " << e.what() << "\n";
-    std::cout << "  >> Certifique-se de que grafo_teste.txt esta na pasta do binario.\n";
+    cout << "  [FALHOU] excecao ao abrir arquivo: " << e.what() << "\n";
+    cout << "  >> Certifique-se de que grafo_teste.txt esta na pasta do binario.\n";
     falhou += 14;
   }
 }
@@ -167,7 +168,7 @@ static void testarArquivoInexistente()
   {
     carregarDeArquivo("nao_existe_xyz.txt", true);
   }
-  catch (const std::exception &)
+  catch (const exception &)
   {
     lancou = true;
   }
@@ -182,27 +183,27 @@ static void testarArquivoInexistente()
 
 static void testarBuscas(bool usarLista)
 {
-  const std::string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
+  const string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
   secao("BFS / DFS — " + rep + " (saida visual, origem=0)");
 
   try
   {
     auto g = carregarDeArquivo(ARQUIVO, usarLista);
 
-    std::cout << "  BFS: ";
+    cout << "  BFS: ";
     bfs(*g, 0);
 
-    std::cout << "  DFS: ";
+    cout << "  DFS: ";
     dfs(*g, 0);
 
-    std::cout << "  BFS origem invalida (sem crash): ";
+    cout << "  BFS origem invalida (sem crash): ";
     bfs(*g, 99);
 
     checar("buscas executaram sem excecao", true);
   }
-  catch (const std::exception &e)
+  catch (const exception &e)
   {
-    std::cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
     falhou++;
   }
 }
@@ -218,9 +219,9 @@ static void testarBuscas(bool usarLista)
 
 static void testarDijkstra(bool usarLista)
 {
-  const std::string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
+  const string rep = usarLista ? "GrafoLista" : "GrafoMatriz";
   secao("Dijkstra — " + rep + " (saida visual, origem=0)");
-  std::cout << "  Esperado: 1=2 | 2=6 | 4=3 | 3=6\n";
+  cout << "  Esperado: 1=2 | 2=6 | 4=3 | 3=6\n";
 
   try
   {
@@ -228,9 +229,9 @@ static void testarDijkstra(bool usarLista)
     dijkstra(*g, 0);
     checar("dijkstra executou sem excecao", true);
   }
-  catch (const std::exception &e)
+  catch (const exception &e)
   {
-    std::cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
     falhou++;
   }
 }
@@ -240,9 +241,9 @@ static void testarDijkstra(bool usarLista)
 int main()
 {
   // ── Parte 1 ──────────────────────────────────────────────────────────────
-  std::cout << "========================================\n";
-  std::cout << "  PARTE 1 — Estrutura do Grafo\n";
-  std::cout << "========================================\n";
+  cout << "========================================\n";
+  cout << "  PARTE 1 — Estrutura do Grafo\n";
+  cout << "========================================\n";
 
   GrafoLista lista(false, true);
   GrafoMatriz matriz(false, true);
@@ -255,10 +256,10 @@ int main()
   rodarTestesDirecionado(matrizDir, "GrafoMatriz");
 
   // ── Parte 2 ──────────────────────────────────────────────────────────────
-  std::cout << "\n========================================\n";
-  std::cout << "  PARTE 2 — Arquivo + Algoritmos\n";
-  std::cout << "  fixture: " << ARQUIVO << "\n";
-  std::cout << "========================================\n";
+  cout << "\n========================================\n";
+  cout << "  PARTE 2 — Arquivo + Algoritmos\n";
+  cout << "  fixture: " << ARQUIVO << "\n";
+  cout << "========================================\n";
 
   testarCarregarArquivo(true);
   testarCarregarArquivo(false);
@@ -271,11 +272,11 @@ int main()
   testarDijkstra(false);
 
   // ── Resultado ─────────────────────────────────────────────────────────────
-  std::cout << "\n========================================\n";
-  std::cout << "  RESULTADO: "
+  cout << "\n========================================\n";
+  cout << "  RESULTADO: "
             << passou << " OK  |  "
             << falhou << " FALHOU\n";
-  std::cout << "========================================\n";
+  cout << "========================================\n";
 
   return falhou == 0 ? 0 : 1;
 }

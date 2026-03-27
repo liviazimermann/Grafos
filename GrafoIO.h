@@ -9,13 +9,14 @@
 #include "Grafo.h"
 #include "GrafoLista.h"
 #include "GrafoMatriz.h"
-
 #include <memory>
 #include <string>
+
+using namespace std;
 
 // Lê o arquivo e retorna um grafo pronto.
 // usarLista == true  -> GrafoLista
 // usarLista == false -> GrafoMatriz
-// Lança std::runtime_error em caso de falha.
-std::unique_ptr<Grafo> carregarDeArquivo(const std::string &caminho,
+// Lança runtime_error em caso de falha.
+unique_ptr<Grafo> carregarDeArquivo(const string &caminho,
                                          bool usarLista);

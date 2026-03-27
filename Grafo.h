@@ -3,12 +3,14 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class Grafo
 {
 protected:
   bool direcionado;
   bool ponderado;
-  std::vector<std::string> vertices; // índice = identificador do vértice
+  vector<string> vertices; // índice = identificador do vértice
 
 public:
   Grafo(bool direcionado, bool ponderado)
@@ -22,9 +24,9 @@ public:
   int numVertices() const { return static_cast<int>(vertices.size()); }
 
   // --- Interface a ser implementada pelas subclasses ---
-  virtual bool inserirVertice(std::string label) = 0;
+  virtual bool inserirVertice(string label) = 0;
   virtual bool removerVertice(int indice) = 0;
-  virtual std::string labelVertice(int indice) const = 0;
+  virtual string labelVertice(int indice) const = 0;
   virtual void imprimeGrafo() const = 0;
 
   virtual bool inserirAresta(int origem, int destino, float peso = 1) = 0;
@@ -34,5 +36,5 @@ public:
   virtual int numArestas() const = 0;
   virtual int grauVertice(int indice) const = 0;
 
-  virtual std::vector<int> retornarVizinhos(int vertice) const = 0;
+  virtual vector<int> retornarVizinhos(int vertice) const = 0;
 };

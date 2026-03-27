@@ -7,21 +7,23 @@
 #include "GrafoIO.h"
 #include "Busca.h"
 
+using namespace std;
+
 // ── Utilitários ───────────────────────────────────────────────────────────────
 
 static void limparBuffer()
 {
-  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-static int lerInt(const std::string &prompt)
+static int lerInt(const string &prompt)
 {
   int v;
-  std::cout << prompt;
-  while (!(std::cin >> v))
+  cout << prompt;
+  while (!(cin >> v))
   {
-    std::cout << "Entrada invalida. Tente novamente: ";
-    std::cin.clear();
+    cout << "Entrada invalida. Tente novamente: ";
+    cin.clear();
     limparBuffer();
   }
   return v;
@@ -29,11 +31,11 @@ static int lerInt(const std::string &prompt)
 
 // ── Criação do grafo ──────────────────────────────────────────────────────────
 
-static std::unique_ptr<Grafo> criarGrafo()
+static unique_ptr<Grafo> criarGrafo()
 {
   while (true)
   {
-    std::cout << "\n=== Novo Grafo ===\n"
+    cout << "\n=== Novo Grafo ===\n"
               << "  1. Criar manualmente\n"
               << "  2. Carregar de arquivo\n"
               << "Escolha: ";
@@ -42,44 +44,44 @@ static std::unique_ptr<Grafo> criarGrafo()
     if (modo == 2)
     {
       limparBuffer();
-      std::cout << "Caminho do arquivo: ";
-      std::string path;
-      std::getline(std::cin, path);
+      cout << "Caminho do arquivo: ";
+      string path;
+      getline(cin, path);
 
-      std::cout << "Representacao (1=Lista, 2=Matriz): ";
+      cout << "Representacao (1=Lista, 2=Matriz): ";
       bool usarLista = (lerInt("") == 1);
 
       try
       {
         auto g = carregarDeArquivo(path, usarLista);
-        std::cout << "Carregado: " << g->numVertices() << " vertices, "
+        cout << "Carregado: " << g->numVertices() << " vertices, "
                   << g->numArestas() << " arestas.\n";
         return g;
       }
-      catch (const std::exception &e)
+      catch (const exception &e)
       {
-        std::cout << "Erro: " << e.what() << "\nTente novamente.\n";
+        cout << "Erro: " << e.what() << "\nTente novamente.\n";
         continue;
       }
     }
 
     // Criação manual
-    std::cout << "Representacao:\n  1. Lista de adjacencia\n  2. Matriz de adjacencia\n";
+    cout << "Representacao:\n  1. Lista de adjacencia\n  2. Matriz de adjacencia\n";
     int rep = lerInt("Escolha: ");
 
-    std::cout << "Direcionado?  0 = Nao  1 = Sim: ";
+    cout << "Direcionado?  0 = Nao  1 = Sim: ";
     bool dir = lerInt("") == 1;
 
-    std::cout << "Ponderado?   0 = Nao  1 = Sim: ";
+    cout << "Ponderado?   0 = Nao  1 = Sim: ";
     bool pond = lerInt("") == 1;
 
     if (rep == 2)
     {
-      std::cout << "[Usando GrafoMatriz]\n";
-      return std::make_unique<GrafoMatriz>(dir, pond);
+      cout << "[Usando GrafoMatriz]\n";
+      return make_unique<GrafoMatriz>(dir, pond);
     }
-    std::cout << "[Usando GrafoLista]\n";
-    return std::make_unique<GrafoLista>(dir, pond);
+    cout << "[Usando GrafoLista]\n";
+    return make_unique<GrafoLista>(dir, pond);
   }
 }
 
@@ -87,7 +89,7 @@ static std::unique_ptr<Grafo> criarGrafo()
 
 static void exibirMenu()
 {
-  std::cout << "\n--- MENU ---\n"
+  cout << "\n--- MENU ---\n"
             << " 1. Inserir vertice\n"
             << " 2. Remover vertice\n"
             << " 3. Inserir aresta\n"
@@ -121,7 +123,7 @@ static void executarMenu(Grafo &g)
 
     if (op == -1)
     {
-      std::cout << "Encerrando.\n";
+      cout << "Encerrando.\n";
       exit(0);
     }
     if (op == 0 || op == 13)
@@ -132,16 +134,16 @@ static void executarMenu(Grafo &g)
     case 1:
     {
       limparBuffer();
-      std::cout << "Label do vertice: ";
-      std::string label;
-      std::getline(std::cin, label);
-      std::cout << (g.inserirVertice(label) ? "Inserido.\n" : "Falhou.\n");
+      cout << "Label do vertice: ";
+      string label;
+      getline(cin, label);
+      cout << (g.inserirVertice(label) ? "Inserido.\n" : "Falhou.\n");
       break;
     }
     case 2:
     {
       int idx = lerInt("Indice do vertice: ");
-      std::cout << (g.removerVertice(idx) ? "Removido.\n" : "Indice invalido.\n");
+      cout << (g.removerVertice(idx) ? "Removido.\n" : "Indice invalido.\n");
       break;
     }
     case 3:
@@ -151,24 +153,24 @@ static void executarMenu(Grafo &g)
       float p = 1.0f;
       if (g.ehPonderado())
       {
-        std::cout << "Peso: ";
-        std::cin >> p;
+        cout << "Peso: ";
+        cin >> p;
       }
-      std::cout << (g.inserirAresta(o, d, p) ? "Aresta inserida.\n" : "Indices invalidos.\n");
+      cout << (g.inserirAresta(o, d, p) ? "Aresta inserida.\n" : "Indices invalidos.\n");
       break;
     }
     case 4:
     {
       int o = lerInt("Origem: ");
       int d = lerInt("Destino: ");
-      std::cout << (g.removerAresta(o, d) ? "Aresta removida.\n" : "Aresta nao encontrada.\n");
+      cout << (g.removerAresta(o, d) ? "Aresta removida.\n" : "Aresta nao encontrada.\n");
       break;
     }
     case 5:
     {
       int o = lerInt("Origem: ");
       int d = lerInt("Destino: ");
-      std::cout << "Existe: " << (g.existeAresta(o, d) ? "Sim\n" : "Nao\n");
+      cout << "Existe: " << (g.existeAresta(o, d) ? "Sim\n" : "Nao\n");
       break;
     }
     case 6:
@@ -177,9 +179,9 @@ static void executarMenu(Grafo &g)
       int d = lerInt("Destino: ");
       float p = g.pesoAresta(o, d);
       if (p < 0)
-        std::cout << "Aresta nao existe.\n";
+        cout << "Aresta nao existe.\n";
       else
-        std::cout << "Peso: " << p << "\n";
+        cout << "Peso: " << p << "\n";
       break;
     }
     case 7:
@@ -188,40 +190,40 @@ static void executarMenu(Grafo &g)
       auto viz = g.retornarVizinhos(idx);
       if (viz.empty())
       {
-        std::cout << "Nenhum vizinho.\n";
+        cout << "Nenhum vizinho.\n";
         break;
       }
-      std::cout << "Vizinhos: ";
+      cout << "Vizinhos: ";
       for (int v : viz)
-        std::cout << g.labelVertice(v) << "(" << v << ") ";
-      std::cout << "\n";
+        cout << g.labelVertice(v) << "(" << v << ") ";
+      cout << "\n";
       break;
     }
     case 8:
     {
       int idx = lerInt("Indice: ");
-      std::string lbl = g.labelVertice(idx);
-      std::cout << (lbl.empty() ? "Indice invalido.\n" : "Label: " + lbl + "\n");
+      string lbl = g.labelVertice(idx);
+      cout << (lbl.empty() ? "Indice invalido.\n" : "Label: " + lbl + "\n");
       break;
     }
     case 9:
-      std::cout << "Vertices: " << g.numVertices() << "\n";
+      cout << "Vertices: " << g.numVertices() << "\n";
       break;
     case 10:
-      std::cout << "Arestas: " << g.numArestas() << "\n";
+      cout << "Arestas: " << g.numArestas() << "\n";
       break;
     case 11:
     {
       int idx = lerInt("Indice do vertice: ");
       int grau = g.grauVertice(idx);
       if (grau < 0)
-        std::cout << "Indice invalido.\n";
+        cout << "Indice invalido.\n";
       else
-        std::cout << "Grau: " << grau << "\n";
+        cout << "Grau: " << grau << "\n";
       break;
     }
     case 12:
-      std::cout << "\n";
+      cout << "\n";
       g.imprimeGrafo();
       break;
     case 14:
@@ -240,7 +242,7 @@ static void executarMenu(Grafo &g)
     {
       if (!g.ehPonderado())
       {
-        std::cout << "Dijkstra requer grafo ponderado.\n";
+        cout << "Dijkstra requer grafo ponderado.\n";
         break;
       }
       int orig = lerInt("Vertice de origem: ");
@@ -248,7 +250,7 @@ static void executarMenu(Grafo &g)
       break;
     }
     default:
-      std::cout << "Opcao invalida.\n";
+      cout << "Opcao invalida.\n";
     }
   }
 }
@@ -257,7 +259,7 @@ static void executarMenu(Grafo &g)
 
 int main()
 {
-  std::cout << "=== Trabalho de Grafos - M1 ===\n";
+  cout << "=== Trabalho de Grafos - M1 ===\n";
   while (true)
   {
     auto grafo = criarGrafo();

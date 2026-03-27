@@ -3,7 +3,6 @@
 // Todos operam via retornarVizinhos() / pesoAresta() — funcionam em Lista e Matriz.
 
 #pragma once
-
 #include "Grafo.h"
 
 // Imprime os vértices alcançáveis a partir de 'origem' em largura (BFS).

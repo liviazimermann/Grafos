@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
+using namespace std;
+
 // ── Auxiliar ─────────────────────────────────────────────────────────────────
 
 bool GrafoLista::indiceValido(int i) const
@@ -16,7 +18,7 @@ GrafoLista::GrafoLista(bool direcionado, bool ponderado)
 
 // ── Vértices ──────────────────────────────────────────────────────────────────
 
-bool GrafoLista::inserirVertice(std::string label)
+bool GrafoLista::inserirVertice(string label)
 {
   vertices.push_back(label);
   lista.push_back({});
@@ -37,7 +39,7 @@ bool GrafoLista::removerVertice(int idx)
   {
     // remove arestas cujo destino é idx
     vizinhos.erase(
-        std::remove_if(vizinhos.begin(), vizinhos.end(),
+        remove_if(vizinhos.begin(), vizinhos.end(),
                        [idx](const Aresta &a)
                        { return a.destino == idx; }),
         vizinhos.end());
@@ -50,7 +52,7 @@ bool GrafoLista::removerVertice(int idx)
   return true;
 }
 
-std::string GrafoLista::labelVertice(int idx) const
+string GrafoLista::labelVertice(int idx) const
 {
   if (!indiceValido(idx))
     return "";
@@ -63,15 +65,15 @@ void GrafoLista::imprimeGrafo() const
 {
   for (int i = 0; i < numVertices(); ++i)
   {
-    std::cout << vertices[i] << ": ";
+    cout << vertices[i] << ": ";
     for (const auto &a : lista[i])
     {
-      std::cout << vertices[a.destino];
+      cout << vertices[a.destino];
       if (ponderado)
-        std::cout << "(" << a.peso << ")";
-      std::cout << " ";
+        cout << "(" << a.peso << ")";
+      cout << " ";
     }
-    std::cout << "\n";
+    cout << "\n";
   }
 }
 
@@ -97,10 +99,10 @@ bool GrafoLista::removerAresta(int origem, int destino)
   if (!indiceValido(origem) || !indiceValido(destino))
     return false;
 
-  auto remover = [](std::vector<Aresta> &v, int dest)
+  auto remover = [](vector<Aresta> &v, int dest)
   {
     v.erase(
-        std::remove_if(v.begin(), v.end(),
+        remove_if(v.begin(), v.end(),
                        [dest](const Aresta &a)
                        { return a.destino == dest; }),
         v.end());
@@ -169,9 +171,9 @@ int GrafoLista::grauVertice(int idx) const
 
 // ── Vizinhos ──────────────────────────────────────────────────────────────────
 
-std::vector<int> GrafoLista::retornarVizinhos(int vertice) const
+vector<int> GrafoLista::retornarVizinhos(int vertice) const
 {
-  std::vector<int> vizinhos;
+  vector<int> vizinhos;
   if (!indiceValido(vertice))
     return vizinhos;
 

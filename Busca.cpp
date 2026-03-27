@@ -1,11 +1,12 @@
 // Busca.cpp
 
 #include "Busca.h"
-
 #include <iostream>
 #include <limits>
 #include <queue>
 #include <vector>
+
+using namespace std;
 
 // ── BFS ───────────────────────────────────────────────────────────────────────
 
@@ -14,24 +15,24 @@ void bfs(const Grafo &g, int origem)
   int n = g.numVertices();
   if (origem < 0 || origem >= n)
   {
-    std::cout << "Vertice de origem invalido.\n";
+    cout << "Vertice de origem invalido.\n";
     return;
   }
 
-  std::vector<bool> visitado(n, false);
-  std::queue<int> fila;
+  vector<bool> visitado(n, false);
+  queue<int> fila;
 
   visitado[origem] = true;
   fila.push(origem);
 
-  std::cout << "BFS a partir de " << g.labelVertice(origem) << ": ";
+  cout << "BFS a partir de " << g.labelVertice(origem) << ": ";
 
   while (!fila.empty())
   {
     int atual = fila.front();
     fila.pop();
 
-    std::cout << g.labelVertice(atual) << " ";
+    cout << g.labelVertice(atual) << " ";
 
     for (int viz : g.retornarVizinhos(atual))
     {
@@ -43,15 +44,15 @@ void bfs(const Grafo &g, int origem)
     }
   }
 
-  std::cout << "\n";
+  cout << "\n";
 }
 
 // ── DFS ───────────────────────────────────────────────────────────────────────
 
-static void dfsRecursivo(const Grafo &g, int atual, std::vector<bool> &visitado)
+static void dfsRecursivo(const Grafo &g, int atual, vector<bool> &visitado)
 {
   visitado[atual] = true;
-  std::cout << g.labelVertice(atual) << " ";
+  cout << g.labelVertice(atual) << " ";
 
   for (int viz : g.retornarVizinhos(atual))
     if (!visitado[viz])
@@ -63,14 +64,14 @@ void dfs(const Grafo &g, int origem)
   int n = g.numVertices();
   if (origem < 0 || origem >= n)
   {
-    std::cout << "Vertice de origem invalido.\n";
+    cout << "Vertice de origem invalido.\n";
     return;
   }
 
-  std::vector<bool> visitado(n, false);
-  std::cout << "DFS a partir de " << g.labelVertice(origem) << ": ";
+  vector<bool> visitado(n, false);
+  cout << "DFS a partir de " << g.labelVertice(origem) << ": ";
   dfsRecursivo(g, origem, visitado);
-  std::cout << "\n";
+  cout << "\n";
 }
 
 // ── Dijkstra ──────────────────────────────────────────────────────────────────
@@ -80,15 +81,15 @@ void dijkstra(const Grafo &g, int origem)
   int n = g.numVertices();
   if (origem < 0 || origem >= n)
   {
-    std::cout << "Vertice de origem invalido.\n";
+    cout << "Vertice de origem invalido.\n";
     return;
   }
 
-  const float INF = std::numeric_limits<float>::infinity();
+  const float INF = numeric_limits<float>::infinity();
 
-  std::vector<float> dist(n, INF);     // distância da origem a cada vértice
-  std::vector<bool> fechado(n, false); // vértice já processado?
-  std::vector<int> anterior(n, -1);    // vértice anterior no caminho
+  vector<float> dist(n, INF);     // distância da origem a cada vértice
+  vector<bool> fechado(n, false); // vértice já processado?
+  vector<int> anterior(n, -1);    // vértice anterior no caminho
 
   dist[origem] = 0.0f;
 
@@ -123,36 +124,36 @@ void dijkstra(const Grafo &g, int origem)
   }
 
   // Imprime resultados
-  std::cout << "Dijkstra a partir de " << g.labelVertice(origem) << ":\n";
+  cout << "Dijkstra a partir de " << g.labelVertice(origem) << ":\n";
 
   for (int i = 0; i < n; ++i)
   {
     if (i == origem)
       continue;
 
-    std::cout << "  " << g.labelVertice(origem) << " -> " << g.labelVertice(i) << ": ";
+    cout << "  " << g.labelVertice(origem) << " -> " << g.labelVertice(i) << ": ";
 
     if (dist[i] == INF)
     {
-      std::cout << "inacessivel\n";
+      cout << "inacessivel\n";
       continue;
     }
 
-    std::cout << "dist=" << dist[i] << "  caminho: ";
+    cout << "dist=" << dist[i] << "  caminho: ";
 
     // Reconstrói o caminho de trás para frente
-    std::vector<int> caminho;
+    vector<int> caminho;
     for (int v = i; v != -1; v = anterior[v])
       caminho.push_back(v);
 
     // Imprime na ordem correta (origem -> destino)
     for (int k = static_cast<int>(caminho.size()) - 1; k >= 0; --k)
     {
-      std::cout << g.labelVertice(caminho[k]);
+      cout << g.labelVertice(caminho[k]);
       if (k > 0)
-        std::cout << " -> ";
+        cout << " -> ";
     }
 
-    std::cout << "\n";
+    cout << "\n";
   }
 }

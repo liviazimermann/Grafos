@@ -2,6 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
+using namespace std;
+
 // ── Auxiliar ────────────────────────────────────────────────────────────────
 
 bool GrafoMatriz::indiceValido(int i) const
@@ -16,7 +18,7 @@ GrafoMatriz::GrafoMatriz(bool direcionado, bool ponderado)
 
 // ── Vértices ─────────────────────────────────────────────────────────────────
 
-bool GrafoMatriz::inserirVertice(std::string label)
+bool GrafoMatriz::inserirVertice(string label)
 {
   int n = numVertices();
 
@@ -25,7 +27,7 @@ bool GrafoMatriz::inserirVertice(std::string label)
     linha.push_back(0.0f);
 
   // nova linha inteira com zeros
-  matriz.push_back(std::vector<float>(n + 1, 0.0f));
+  matriz.push_back(vector<float>(n + 1, 0.0f));
 
   vertices.push_back(label);
   return true;
@@ -47,7 +49,7 @@ bool GrafoMatriz::removerVertice(int idx)
   return true;
 }
 
-std::string GrafoMatriz::labelVertice(int idx) const
+string GrafoMatriz::labelVertice(int idx) const
 {
   if (!indiceValido(idx))
     return "";
@@ -61,17 +63,17 @@ void GrafoMatriz::imprimeGrafo() const
   int n = numVertices();
 
   // cabeçalho
-  std::cout << "     ";
+  cout << "     ";
   for (int j = 0; j < n; ++j)
-    std::cout << std::setw(6) << vertices[j];
-  std::cout << "\n";
+    cout << setw(6) << vertices[j];
+  cout << "\n";
 
   for (int i = 0; i < n; ++i)
   {
-    std::cout << std::setw(4) << vertices[i] << " ";
+    cout << setw(4) << vertices[i] << " ";
     for (int j = 0; j < n; ++j)
-      std::cout << std::setw(6) << matriz[i][j];
-    std::cout << "\n";
+      cout << setw(6) << matriz[i][j];
+    cout << "\n";
   }
 }
 
@@ -154,9 +156,9 @@ int GrafoMatriz::grauVertice(int idx) const
 
 // ── Vizinhos ─────────────────────────────────────────────────────────────────
 
-std::vector<int> GrafoMatriz::retornarVizinhos(int vertice) const
+vector<int> GrafoMatriz::retornarVizinhos(int vertice) const
 {
-  std::vector<int> vizinhos;
+  vector<int> vizinhos;
   if (!indiceValido(vertice))
     return vizinhos;
 
