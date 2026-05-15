@@ -486,6 +486,72 @@ static void testarColoracaoArquivos()
     cout << "  [FALHOU] excecao: " << e.what() << "\n";
     falhou += 6;
   }
+
+  // ── GrafoMatriz: slides.txt ───────────────────────────────────────────────
+  secao("Coloracao: slides.txt — GrafoMatriz");
+  try
+  {
+    auto g = carregarDeArquivo("slides.txt", false);
+    auto r = Coloracao::semOrdem(*g);
+    checar("semOrdem: 3 cores", r.numCores == 3);
+    checar("semOrdem: valida",  coloracaoValida(*g, r.cores));
+    r = Coloracao::welshPowell(*g);
+    checar("welshPowell: valida",     coloracaoValida(*g, r.cores));
+    checar("welshPowell: <= 3 cores", r.numCores <= 3);
+    r = Coloracao::dsatur(*g);
+    checar("dsatur: valida",     coloracaoValida(*g, r.cores));
+    checar("dsatur: <= 3 cores", r.numCores <= 3);
+    r = Coloracao::forcaBruta(*g);
+    checar("forcaBruta: 3 cores (otimo)", r.numCores == 3);
+    checar("forcaBruta: valida",          coloracaoValida(*g, r.cores));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 8;
+  }
+
+  // ── GrafoMatriz: slides_modificado.txt ───────────────────────────────────
+  secao("Coloracao: slides_modificado.txt — GrafoMatriz");
+  try
+  {
+    auto g = carregarDeArquivo("slides_modificado.txt", false);
+    auto r = Coloracao::semOrdem(*g);
+    checar("semOrdem: valida",    coloracaoValida(*g, r.cores));
+    checar("semOrdem: <= 3 cores", r.numCores <= 3);
+    r = Coloracao::welshPowell(*g);
+    checar("welshPowell: valida",     coloracaoValida(*g, r.cores));
+    checar("welshPowell: <= 3 cores", r.numCores <= 3);
+    r = Coloracao::dsatur(*g);
+    checar("dsatur: valida",     coloracaoValida(*g, r.cores));
+    checar("dsatur: <= 3 cores", r.numCores <= 3);
+    r = Coloracao::forcaBruta(*g);
+    checar("forcaBruta: 3 cores (otimo)", r.numCores == 3);
+    checar("forcaBruta: valida",          coloracaoValida(*g, r.cores));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 8;
+  }
+
+  // ── GrafoMatriz: espacoaereo.txt ─────────────────────────────────────────
+  secao("Coloracao: espacoaereo.txt — GrafoMatriz");
+  try
+  {
+    auto g = carregarDeArquivo("espacoaereo.txt", false);
+    auto r = Coloracao::semOrdem(*g);
+    checar("semOrdem: valida", coloracaoValida(*g, r.cores));
+    r = Coloracao::welshPowell(*g);
+    checar("welshPowell: valida", coloracaoValida(*g, r.cores));
+    r = Coloracao::dsatur(*g);
+    checar("dsatur: valida", coloracaoValida(*g, r.cores));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 3;
+  }
 }
 
 // ── Parte 5: Prim ─────────────────────────────────────────────────────────────
@@ -572,6 +638,44 @@ static void testarPrim()
     falhou += 6;
   }
 
+  // ── slides.txt — peso MST = 12 ───────────────────────────────────────────
+  //
+  // MST (Kruskal): 1-3(2) + 2-4(2) + 0-1(3) + 0-2(5) = 12
+  secao("Prim: slides.txt (5v 7e, peso MST=12)");
+  try
+  {
+    auto g = carregarDeArquivo("slides.txt", true);
+    auto r = AGM::prim(*g, 0);
+    checar("conexo",           r.conexo);
+    checar("n-1 arestas",      (int)r.arestas.size() == g->numVertices() - 1);
+    checar("peso total == 12", fabsf(r.pesoTotal - 12.0f) < 1e-3f);
+    checar("arestas existem",  arestasValidas(*g, r));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 4;
+  }
+
+  // ── slides_modificado.txt — grafo desconexo (vertice 5 isolado) ──────────
+  //
+  // Componente principal (0-4): peso MST = 15. Vertice 5 nao e alcancavel.
+  secao("Prim: slides_modificado.txt (6v, vertice 5 isolado, MST componente=15)");
+  try
+  {
+    auto g = carregarDeArquivo("slides_modificado.txt", true);
+    auto r = AGM::prim(*g, 0);
+    checar("nao conexo (v5 isolado)", !r.conexo);
+    checar("4 arestas encontradas",   (int)r.arestas.size() == 4);
+    checar("peso componente == 15",   fabsf(r.pesoTotal - 15.0f) < 1e-3f);
+    checar("arestas existem",         arestasValidas(*g, r));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 4;
+  }
+
   // ── espacoaereo.txt — verifica validade e imprime tempo ──────────────────
   //
   // Vertice 0 e isolado (nao aparece em nenhuma aresta do arquivo).
@@ -653,6 +757,40 @@ static void testarKruskal()
   {
     cout << "  [FALHOU] excecao: " << e.what() << "\n";
     falhou += 3;
+  }
+
+  // ── slides.txt — peso MST = 12 ───────────────────────────────────────────
+  secao("Kruskal: slides.txt (5v 7e, peso MST=12)");
+  try
+  {
+    auto g = carregarDeArquivo("slides.txt", true);
+    auto r = AGM::kruskal(*g);
+    checar("conexo",           r.conexo);
+    checar("n-1 arestas",      (int)r.arestas.size() == g->numVertices() - 1);
+    checar("peso total == 12", fabsf(r.pesoTotal - 12.0f) < 1e-3f);
+    checar("arestas existem",  arestasValidas(*g, r));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 4;
+  }
+
+  // ── slides_modificado.txt — grafo desconexo (vertice 5 isolado) ──────────
+  secao("Kruskal: slides_modificado.txt (6v, vertice 5 isolado, MST componente=15)");
+  try
+  {
+    auto g = carregarDeArquivo("slides_modificado.txt", true);
+    auto r = AGM::kruskal(*g);
+    checar("nao conexo (v5 isolado)", !r.conexo);
+    checar("4 arestas encontradas",   (int)r.arestas.size() == 4);
+    checar("peso componente == 15",   fabsf(r.pesoTotal - 15.0f) < 1e-3f);
+    checar("arestas existem",         arestasValidas(*g, r));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 4;
   }
 
   // ── Prim e Kruskal convergem no mesmo peso ────────────────────────────────
