@@ -5,12 +5,10 @@
 #include "Grafo.h"
 #include <vector>
 
-using namespace std;
-
 struct ResultadoColoracao
 {
   int numCores;
-  vector<int> cores; // cores[i] = cor do vértice i (1-indexed, 0 = sem cor)
+  std::vector<int> cores; // cores[i] = cor do vértice i (1-indexed, 0 = sem cor)
   double tempoMs;
 };
 

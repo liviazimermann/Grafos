@@ -5,8 +5,6 @@
 #include "Grafo.h"
 #include <vector>
 
-using namespace std;
-
 struct ArestaAGM
 {
   int origem;
@@ -16,7 +14,7 @@ struct ArestaAGM
 
 struct ResultadoAGM
 {
-  vector<ArestaAGM> arestas;
+  std::vector<ArestaAGM> arestas;
   float pesoTotal;
   double tempoMs;
   bool conexo; // false se o grafo nao for conexo (AGM incompleta)
