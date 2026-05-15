@@ -5,7 +5,9 @@
 #include "GrafoLista.h"
 #include "GrafoMatriz.h"
 #include "GrafoIO.h"
+#include "AGM.h"
 #include "Busca.h"
+#include "Coloracao.h"
 
 using namespace std;
 
@@ -85,6 +87,34 @@ static unique_ptr<Grafo> criarGrafo()
   }
 }
 
+// ── AGM ───────────────────────────────────────────────────────────────────────
+
+static void imprimirAGM(const Grafo &g, const string &nome, const ResultadoAGM &r)
+{
+  cout << "\n[" << nome << "]\n";
+  if (!r.conexo)
+    cout << "  Aviso: grafo nao conexo — AGM incompleta.\n";
+  for (const auto &a : r.arestas)
+    cout << "  " << g.labelVertice(a.origem) << " -- "
+         << g.labelVertice(a.destino) << "  peso=" << a.peso << "\n";
+  cout << "  Peso total : " << r.pesoTotal << "\n"
+       << "  Arestas    : " << r.arestas.size() << "\n"
+       << "  Tempo      : " << r.tempoMs << " ms\n";
+}
+
+// ── Coloração ─────────────────────────────────────────────────────────────────
+
+static void imprimirColoracao(const Grafo &g, const string &nome,
+                              const ResultadoColoracao &r)
+{
+  cout << "\n[" << nome << "]\n"
+       << "  Cores usadas : " << r.numCores << "\n"
+       << "  Tempo        : " << r.tempoMs << " ms\n";
+  if (g.numVertices() < 10)
+    for (int v = 0; v < g.numVertices(); ++v)
+      cout << "  Vertice " << g.labelVertice(v) << " -> cor " << r.cores[v] << "\n";
+}
+
 // ── Menu principal ────────────────────────────────────────────────────────────
 
 static void exibirMenu()
@@ -106,6 +136,10 @@ static void exibirMenu()
             << "14. BFS (busca em largura)\n"
             << "15. DFS (busca em profundidade)\n"
             << "16. Dijkstra (menor caminho)\n"
+            << "17. Coloracao (Sem Ordem, Welsh-Powell, DSatur)\n"
+            << "18. Coloracao - Forca Bruta (so grafos pequenos!)\n"
+            << "19. Prim (Arvore Geradora Minima)\n"
+            << "20. Kruskal (Arvore Geradora Minima)\n"
             << " 0. Reiniciar (novo grafo)\n"
             << "-1. Sair\n"
             << "Opcao: ";
@@ -247,6 +281,46 @@ static void executarMenu(Grafo &g)
       }
       int orig = lerInt("Vertice de origem: ");
       dijkstra(g, orig);
+      break;
+    }
+    case 17:
+    {
+      imprimirColoracao(g, "Sem Ordem",    Coloracao::semOrdem(g));
+      imprimirColoracao(g, "Welsh-Powell", Coloracao::welshPowell(g));
+      imprimirColoracao(g, "DSatur",       Coloracao::dsatur(g));
+      break;
+    }
+    case 18:
+    {
+      if (g.numVertices() > 20)
+        cout << "Aviso: forca bruta em grafos grandes pode demorar muito.\n";
+      imprimirColoracao(g, "Forca Bruta", Coloracao::forcaBruta(g));
+      break;
+    }
+    case 19:
+    {
+      if (!g.ehPonderado())
+      {
+        cout << "Prim requer grafo ponderado.\n";
+        break;
+      }
+      int orig = lerInt("Vertice inicial (0 a " + to_string(g.numVertices() - 1) + "): ");
+      if (orig < 0 || orig >= g.numVertices())
+      {
+        cout << "Vertice invalido.\n";
+        break;
+      }
+      imprimirAGM(g, "Prim", AGM::prim(g, orig));
+      break;
+    }
+    case 20:
+    {
+      if (!g.ehPonderado())
+      {
+        cout << "Kruskal requer grafo ponderado.\n";
+        break;
+      }
+      imprimirAGM(g, "Kruskal", AGM::kruskal(g));
       break;
     }
     default:
