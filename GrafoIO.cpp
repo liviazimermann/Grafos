@@ -37,11 +37,19 @@ unique_ptr<Grafo> carregarDeArquivo(const string &caminho,
   {
     int ao, ad;
     if (!(f >> ao >> ad))
+    {
+      if (f.eof())
+        break;
       throw runtime_error("Aresta " + to_string(i) + " invalida.");
+    }
 
     float ap = 1.0f;
     if (ponderado && !(f >> ap))
+    {
+      if (f.eof())
+        break;
       throw runtime_error("Peso da aresta " + to_string(i) + " ausente.");
+    }
 
     if (!g->inserirAresta(ao, ad, ap))
       throw runtime_error("Indices de aresta invalidos na linha " +

@@ -120,7 +120,7 @@ static void imprimirColoracao(const Grafo &g, const string &nome,
 static void exibirMenu()
 {
   cout << "\n--- MENU ---\n"
-            << " 1. Inserir vertice\n"
+            /*<< " 1. Inserir vertice\n"
             << " 2. Remover vertice\n"
             << " 3. Inserir aresta\n"
             << " 4. Remover aresta\n"
@@ -136,6 +136,7 @@ static void exibirMenu()
             << "14. BFS (busca em largura)\n"
             << "15. DFS (busca em profundidade)\n"
             << "16. Dijkstra (menor caminho)\n"
+            */
             << "17. Coloracao (Sem Ordem, Welsh-Powell, DSatur)\n"
             << "18. Coloracao - Forca Bruta (so grafos pequenos!)\n"
             << "19. Prim (Arvore Geradora Minima)\n"

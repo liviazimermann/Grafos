@@ -840,6 +840,7 @@ static void testarKruskal()
 
 int main()
 {
+  /*
   // ── Parte 1 ──────────────────────────────────────────────────────────────
   cout << "========================================\n";
   cout << "  PARTE 1 — Estrutura do Grafo\n";
@@ -870,7 +871,7 @@ int main()
 
   testarDijkstra(true);
   testarDijkstra(false);
-
+  */
   // ── Parte 3 ──────────────────────────────────────────────────────────────
   cout << "\n========================================\n";
   cout << "  PARTE 3 — Coloracao\n";
