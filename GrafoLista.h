@@ -23,6 +23,8 @@ public:
   GrafoLista(bool direcionado, bool ponderado);
   ~GrafoLista() override = default;
 
+  unique_ptr<Grafo> clone() const override;
+
   bool inserirVertice(string label) override;
   bool removerVertice(int indice) override;
   string labelVertice(int indice) const override;

@@ -16,6 +16,16 @@ bool GrafoMatriz::indiceValido(int i) const
 GrafoMatriz::GrafoMatriz(bool direcionado, bool ponderado)
     : Grafo(direcionado, ponderado) {}
 
+// ── Copia profunda ────────────────────────────────────────────────────────────
+
+unique_ptr<Grafo> GrafoMatriz::clone() const
+{
+  auto copia = make_unique<GrafoMatriz>(direcionado, ponderado);
+  copia->vertices = vertices; // copia os labels
+  copia->matriz = matriz;     // copia a matriz inteira (deep copy de vector)
+  return copia;
+}
+
 // ── Vértices ─────────────────────────────────────────────────────────────────
 
 bool GrafoMatriz::inserirVertice(string label)

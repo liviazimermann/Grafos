@@ -12,7 +12,9 @@
 #include <string>
 #include "AGM.h"
 #include "Busca.h"
+#include "BuscaLocal.h"
 #include "Coloracao.h"
+#include "FluxoMaximo.h"
 #include "Grafo.h"
 #include "GrafoIO.h"
 #include "GrafoLista.h"
@@ -836,6 +838,122 @@ static void testarKruskal()
   }
 }
 
+// ── Parte 7: Ford-Fulkerson (fluxo maximo) ─────────────────────────────────────
+
+// Constroi a rede classica dos slides (CLRS): s=0, v1..v4, t=5. Fluxo max = 23.
+static unique_ptr<Grafo> montarRedeClrs(bool usarLista)
+{
+  unique_ptr<Grafo> g = usarLista
+                            ? unique_ptr<Grafo>(new GrafoLista(true, true))
+                            : unique_ptr<Grafo>(new GrafoMatriz(true, true));
+  for (int i = 0; i < 6; ++i)
+    g->inserirVertice(to_string(i));
+  g->inserirAresta(0, 1, 16);
+  g->inserirAresta(0, 2, 13);
+  g->inserirAresta(1, 3, 12);
+  g->inserirAresta(2, 1, 4);
+  g->inserirAresta(3, 2, 9);
+  g->inserirAresta(2, 4, 14);
+  g->inserirAresta(4, 3, 7);
+  g->inserirAresta(3, 5, 20);
+  g->inserirAresta(4, 5, 4);
+  return g;
+}
+
+static void testarFordFulkerson()
+{
+  // ── Rede CLRS (fluxo max = 23) em Lista e Matriz ──────────────────────────
+  for (bool usarLista : {true, false})
+  {
+    secao(string("Ford-Fulkerson: rede CLRS — ") +
+          (usarLista ? "GrafoLista" : "GrafoMatriz"));
+    auto g = montarRedeClrs(usarLista);
+    auto r = FluxoMaximo::fordFulkerson(*g, 0, 5);
+    checar("fluxo maximo == 23", fabsf(r.fluxoMaximo - 23.0f) < 1e-3f);
+    checar("usou ao menos 1 caminho aumentante", r.caminhos >= 1);
+
+    // O grafo original NAO pode ter sido modificado pela copia residual
+    checar("grafo original intacto (9 arestas)", g->numArestas() == 9);
+    checar("grafo original intacto (peso s->v1 == 16)",
+           fabsf(g->pesoAresta(0, 1) - 16.0f) < 1e-3f);
+  }
+
+  // ── Exemplo 2 dos slides (fluxo max = 9) ──────────────────────────────────
+  secao("Ford-Fulkerson: Exemplo 2 dos slides (fluxo max = 9)");
+  try
+  {
+    auto g = carregarDeArquivo("fluxo_exemplo2.txt", false);
+    auto r = FluxoMaximo::fordFulkerson(*g, 0, 3);
+    checar("fluxo maximo == 9", fabsf(r.fluxoMaximo - 9.0f) < 1e-3f);
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 1;
+  }
+
+  // ── Arquivo fluxo_clrs.txt deve bater com a rede montada na mao ───────────
+  secao("Ford-Fulkerson: fluxo_clrs.txt (fluxo max = 23)");
+  try
+  {
+    auto g = carregarDeArquivo("fluxo_clrs.txt", true);
+    auto r = FluxoMaximo::fordFulkerson(*g, 0, 5);
+    checar("fluxo maximo == 23", fabsf(r.fluxoMaximo - 23.0f) < 1e-3f);
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 1;
+  }
+
+  // ── Origem == destino -> fluxo 0 ──────────────────────────────────────────
+  secao("Ford-Fulkerson: casos de borda");
+  {
+    auto g = montarRedeClrs(true);
+    checar("origem == destino -> fluxo 0",
+           fabsf(FluxoMaximo::fordFulkerson(*g, 0, 0).fluxoMaximo) < 1e-3f);
+    // Lista e Matriz devem dar o mesmo resultado
+    auto gm = montarRedeClrs(false);
+    checar("Lista e Matriz concordam",
+           fabsf(FluxoMaximo::fordFulkerson(*g, 0, 5).fluxoMaximo -
+                 FluxoMaximo::fordFulkerson(*gm, 0, 5).fluxoMaximo) < 1e-3f);
+  }
+}
+
+// ── Parte 8: Busca Local (otimizacao do fluxo maximo) ──────────────────────────
+
+static void testarBuscaLocal()
+{
+  // ── fluxo_local.txt: inverter (2,1)->(1,2) abre o caminho 0->1->2->3 ───────
+  secao("Busca Local: fluxo_local.txt (0 -> 10 invertendo 1 aresta)");
+  try
+  {
+    auto g = carregarDeArquivo("fluxo_local.txt", true);
+    auto r = BuscaLocal::otimizar(*g, 0, 3);
+    checar("fluxo inicial == 0", fabsf(r.fluxoInicial - 0.0f) < 1e-3f);
+    checar("fluxo final == 10",  fabsf(r.fluxoFinal - 10.0f) < 1e-3f);
+    checar("usou 1 passo",       r.passos == 1);
+    checar("grafo original intacto", g->existeAresta(2, 1) && !g->existeAresta(1, 2));
+  }
+  catch (const exception &e)
+  {
+    cout << "  [FALHOU] excecao: " << e.what() << "\n";
+    falhou += 4;
+  }
+
+  // ── Propriedade geral: a busca local nunca piora o fluxo ──────────────────
+  secao("Busca Local: rede CLRS (fluxo final >= inicial)");
+  {
+    auto g = montarRedeClrs(false);
+    auto r = BuscaLocal::otimizar(*g, 0, 5);
+    checar("fluxo final >= inicial", r.fluxoFinal >= r.fluxoInicial - 1e-3f);
+    checar("passos >= 0", r.passos >= 0);
+    cout << "  [INFO]   inicial: " << r.fluxoInicial
+         << "  final: " << r.fluxoFinal
+         << "  passos: " << r.passos << "\n";
+  }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 int main()
@@ -900,6 +1018,20 @@ int main()
   cout << "========================================\n";
 
   testarKruskal();
+
+  // ── Parte 7 ──────────────────────────────────────────────────────────────
+  cout << "\n========================================\n";
+  cout << "  PARTE 7 — Ford-Fulkerson (fluxo maximo)\n";
+  cout << "========================================\n";
+
+  testarFordFulkerson();
+
+  // ── Parte 8 ──────────────────────────────────────────────────────────────
+  cout << "\n========================================\n";
+  cout << "  PARTE 8 — Busca Local (otimiza fluxo maximo)\n";
+  cout << "========================================\n";
+
+  testarBuscaLocal();
 
   // ── Resultado ─────────────────────────────────────────────────────────────
   cout << "\n========================================\n";

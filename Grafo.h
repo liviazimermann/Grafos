@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,12 @@ public:
       : direcionado(direcionado), ponderado(ponderado) {}
 
   virtual ~Grafo() = default;
+
+  // Copia profunda: devolve um grafo novo e independente (sem referencias
+  // ao original). Essencial para o Ford-Fulkerson (rede residual) e para a
+  // busca local (geracao de vizinhos), que precisam alterar a copia sem
+  // corromper o grafo de entrada.
+  virtual unique_ptr<Grafo> clone() const = 0;
 
   // --- Informações do grafo ---
   bool ehDirecionado() const { return direcionado; }

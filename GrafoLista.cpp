@@ -16,6 +16,16 @@ bool GrafoLista::indiceValido(int i) const
 GrafoLista::GrafoLista(bool direcionado, bool ponderado)
     : Grafo(direcionado, ponderado) {}
 
+// ── Copia profunda ──────────────────────────────────────────────────────────
+
+unique_ptr<Grafo> GrafoLista::clone() const
+{
+  auto copia = make_unique<GrafoLista>(direcionado, ponderado);
+  copia->vertices = vertices; // copia os labels
+  copia->lista = lista;       // copia as listas de adjacencia (deep copy de vector)
+  return copia;
+}
+
 // ── Vértices ──────────────────────────────────────────────────────────────────
 
 bool GrafoLista::inserirVertice(string label)

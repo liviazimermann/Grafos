@@ -8,6 +8,8 @@
 #include "AGM.h"
 #include "Busca.h"
 #include "Coloracao.h"
+#include "FluxoMaximo.h"
+#include "BuscaLocal.h"
 
 using namespace std;
 
@@ -141,6 +143,8 @@ static void exibirMenu()
             << "18. Coloracao - Forca Bruta (so grafos pequenos!)\n"
             << "19. Prim (Arvore Geradora Minima)\n"
             << "20. Kruskal (Arvore Geradora Minima)\n"
+            << "21. Ford-Fulkerson (fluxo maximo)\n"
+            << "22. Busca Local (otimiza fluxo maximo)\n"
             << " 0. Reiniciar (novo grafo)\n"
             << "-1. Sair\n"
             << "Opcao: ";
@@ -322,6 +326,50 @@ static void executarMenu(Grafo &g)
         break;
       }
       imprimirAGM(g, "Kruskal", AGM::kruskal(g));
+      break;
+    }
+    case 21:
+    {
+      if (!g.ehDirecionado() || !g.ehPonderado())
+      {
+        cout << "Fluxo maximo requer grafo direcionado e ponderado.\n";
+        break;
+      }
+      int s = lerInt("Vertice de origem (fonte): ");
+      int t = lerInt("Vertice de destino (sorvedor): ");
+      if (s < 0 || s >= g.numVertices() || t < 0 || t >= g.numVertices())
+      {
+        cout << "Vertice invalido.\n";
+        break;
+      }
+      auto r = FluxoMaximo::fordFulkerson(g, s, t);
+      cout << "\n[Ford-Fulkerson]\n"
+           << "  Fluxo maximo " << g.labelVertice(s) << " -> " << g.labelVertice(t)
+           << " : " << r.fluxoMaximo << "\n"
+           << "  Caminhos aumentantes : " << r.caminhos << "\n"
+           << "  Tempo                : " << r.tempoMs << " ms\n";
+      break;
+    }
+    case 22:
+    {
+      if (!g.ehDirecionado() || !g.ehPonderado())
+      {
+        cout << "Busca local requer grafo direcionado e ponderado.\n";
+        break;
+      }
+      int s = lerInt("Vertice de origem (fonte): ");
+      int t = lerInt("Vertice de destino (sorvedor): ");
+      if (s < 0 || s >= g.numVertices() || t < 0 || t >= g.numVertices())
+      {
+        cout << "Vertice invalido.\n";
+        break;
+      }
+      auto r = BuscaLocal::otimizar(g, s, t);
+      cout << "\n[Busca Local — otimizacao do fluxo maximo]\n"
+           << "  Fluxo da solucao original : " << r.fluxoInicial << "\n"
+           << "  Fluxo da solucao final    : " << r.fluxoFinal << "\n"
+           << "  Passos (melhorias)        : " << r.passos << "\n"
+           << "  Tempo                     : " << r.tempoMs << " ms\n";
       break;
     }
     default:

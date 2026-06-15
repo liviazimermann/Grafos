@@ -14,6 +14,8 @@ public:
   GrafoMatriz(bool direcionado, bool ponderado);
   ~GrafoMatriz() override = default;
 
+  unique_ptr<Grafo> clone() const override;
+
   bool inserirVertice(string label) override;
   bool removerVertice(int indice) override;
   string labelVertice(int indice) const override;

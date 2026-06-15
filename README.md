@@ -1,6 +1,8 @@
 # Grafos em C++
 
-Implementação de grafos com lista e matriz de adjacência, com suporte a BFS, DFS e Dijkstra.
+Implementação de grafos com lista e matriz de adjacência, com suporte a BFS, DFS,
+Dijkstra, AGM (Prim/Kruskal), coloração, fluxo máximo (Ford-Fulkerson) e
+otimização por busca local.
 
 ---
 
@@ -33,7 +35,11 @@ Instale o [MinGW-w64](https://www.mingw-w64.org/) e adicione ao PATH.
 ├── GrafoLista.h / GrafoLista.cpp
 ├── GrafoMatriz.h / GrafoMatriz.cpp
 ├── GrafoIO.h / GrafoIO.cpp
-├── Busca.h / Busca.cpp
+├── Busca.h / Busca.cpp            (BFS, DFS, Dijkstra, DFS p/ caminho aumentante)
+├── AGM.h / AGM.cpp                (Prim, Kruskal)
+├── Coloracao.h / Coloracao.cpp
+├── FluxoMaximo.h / FluxoMaximo.cpp   (Ford-Fulkerson)
+├── BuscaLocal.h / BuscaLocal.cpp     (otimizacao do fluxo maximo)
 ├── main.cpp
 └── testes.cpp
 ```
@@ -46,14 +52,16 @@ Instale o [MinGW-w64](https://www.mingw-w64.org/) e adicione ao PATH.
 
 ```bash
 g++ -std=c++17 -Wall -o grafo \
-    main.cpp GrafoLista.cpp GrafoMatriz.cpp GrafoIO.cpp Busca.cpp
+    main.cpp GrafoLista.cpp GrafoMatriz.cpp GrafoIO.cpp Busca.cpp \
+    AGM.cpp Coloracao.cpp FluxoMaximo.cpp BuscaLocal.cpp
 ```
 
 ### Testes automatizados
 
 ```bash
 g++ -std=c++17 -Wall -o testes \
-    testes.cpp GrafoLista.cpp GrafoMatriz.cpp GrafoIO.cpp Busca.cpp
+    testes.cpp GrafoLista.cpp GrafoMatriz.cpp GrafoIO.cpp Busca.cpp \
+    AGM.cpp Coloracao.cpp FluxoMaximo.cpp BuscaLocal.cpp
 ```
 
 ---

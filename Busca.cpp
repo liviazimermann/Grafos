@@ -74,6 +74,42 @@ void dfs(const Grafo &g, int origem)
   cout << "\n";
 }
 
+// ── DFS para caminho aumentante (Ford-Fulkerson) ───────────────────────────────
+//
+// Mesma ideia da DFS recursiva acima, mas com duas diferencas:
+//   1. para ao encontrar 'destino' e devolve o caminho percorrido;
+//   2. so percorre arcos com capacidade > 0 (arcos de custo 0 sao ignorados).
+
+static bool dfsCaminhoRec(const Grafo &g, int atual, int destino,
+                          vector<bool> &visitado, vector<int> &caminho)
+{
+  visitado[atual] = true;
+  caminho.push_back(atual);
+
+  if (atual == destino)
+    return true;
+
+  for (int viz : g.retornarVizinhos(atual))
+    if (!visitado[viz] && g.pesoAresta(atual, viz) > 0) // ignora capacidade 0
+      if (dfsCaminhoRec(g, viz, destino, visitado, caminho))
+        return true;
+
+  caminho.pop_back(); // backtrack: este vertice nao leva ao destino
+  return false;
+}
+
+bool dfsCaminho(const Grafo &g, int origem, int destino, vector<int> &caminho)
+{
+  caminho.clear();
+
+  int n = g.numVertices();
+  if (origem < 0 || origem >= n || destino < 0 || destino >= n)
+    return false;
+
+  vector<bool> visitado(n, false);
+  return dfsCaminhoRec(g, origem, destino, visitado, caminho);
+}
+
 // ── Dijkstra ──────────────────────────────────────────────────────────────────
 
 void dijkstra(const Grafo &g, int origem)
