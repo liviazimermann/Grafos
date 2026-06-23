@@ -10,6 +10,7 @@
 #include "Coloracao.h"
 #include "FluxoMaximo.h"
 #include "BuscaLocal.h"
+#include "Simulacao.h"
 
 using namespace std;
 
@@ -145,6 +146,7 @@ static void exibirMenu()
             << "20. Kruskal (Arvore Geradora Minima)\n"
             << "21. Ford-Fulkerson (fluxo maximo)\n"
             << "22. Busca Local (otimiza fluxo maximo)\n"
+            << "23. Simulacao SIR (epidemia)\n"
             << " 0. Reiniciar (novo grafo)\n"
             << "-1. Sair\n"
             << "Opcao: ";
@@ -370,6 +372,19 @@ static void executarMenu(Grafo &g)
            << "  Fluxo da solucao final    : " << r.fluxoFinal << "\n"
            << "  Passos (melhorias)        : " << r.passos << "\n"
            << "  Tempo                     : " << r.tempoMs << " ms\n";
+      break;
+    }
+    case 23:
+    {
+      double beta, gamma;
+      cout << "Beta (prob. transmissao, ex: 0.3): ";
+      cin >> beta;
+      cout << "Gamma (prob. recuperacao, ex: 0.1): ";
+      cin >> gamma;
+      int semente = lerInt("Vertice semente (0 a " + to_string(g.numVertices() - 1) + "): ");
+
+      auto r = Simulacao::executarSIR(g, beta, gamma, semente);
+      imprimirResultadoSIR(r, g.numVertices());
       break;
     }
     default:
